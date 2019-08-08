@@ -1,0 +1,25 @@
+{
+  "name": "zdrone",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "keywords": [
+    "Discord",
+    "bot",
+    "oauth"
+  ],
+  "author": "Dracoctix <dracoctix@outlook.fr>",
+  "license": "ISC",
+  "dependencies": {
+    "discord-js-command-client": "^1.0.1",
+    "discord.js": "^11.5.1",
+    "dotenv": "^8.0.0",
+    "mkdirp": "^0.5.1",
+    "oauth": "^0.9.15",
+    "underscore": "^1.9.1"
+  }
+}
