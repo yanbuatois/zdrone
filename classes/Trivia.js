@@ -1,6 +1,4 @@
 const _ = require('underscore');
-const request = require('request');
-const fs = require('fs');
 
 /**
  * @typedef {Object} Question Trivia question
@@ -26,6 +24,10 @@ class Trivia {
     this.illustrationRate = illustrationRate;
     this.biographyRate = biographyRate;
     this.abilityRate = abilityRate;
+
+    if (this.rounds === 0) {
+      throw new Error('You cannot create a trivia with 0 round.');
+    }
 
     this.round = 0;
     this.scoreBoard = {};
@@ -84,8 +86,10 @@ class Trivia {
       this.type = 'biography';
       // Bio
       const randomChara = charas[Math.floor(Math.random()*charas.length)];
+      const miniName = (['cr','m','l']).includes(randomChara.rarity) ? randomChara.name.slice(0, -3) : randomChara.name;
+      const nameRegex = new RegExp(`${miniName}( (Cr|Mt|Ld))?`, 'g');
       question = {
-        text: `Which character has the following biography ?\n> ${randomChara.description.replace('\n', '\n> ').replace(randomChara.name, '???')}`
+        text: `Which character has the following biography ?\n> ${randomChara.description.replace('\n', '\n> ').replace(nameRegex, '???')}`
       };
       response = {
         text: randomChara.name,
@@ -184,7 +188,7 @@ class Trivia {
 
   getScorePlayerIds() {
     const playerIds = _.keys(this.scoreBoard);
-    playerIds.sort((a, b) => this.scoreBoard[a] - this.scoreBoard[b]);
+    playerIds.sort((a, b) => this.scoreBoard[b]- this.scoreBoard[a]);
     return playerIds;
   }
 

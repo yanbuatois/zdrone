@@ -12,6 +12,13 @@
  * @property {Object} [params={}] params of the query
  */
 
+/**
+ * Query result
+ * @typedef {Object} QueryResult Query result
+ * @property {Object<String,*>} context reply context
+ * @property {Object<String,*>} [items] reply items
+ */
+
 const url = require('url');
 const { OAuth } = require('oauth');
 
@@ -124,7 +131,7 @@ class UROAuth extends OAuth {
   /**
    * Do one or more queries on the UR API
    * @param queries {QueryObject} All queries to do
-   * @returns {Promise<Object>} The queries result
+   * @returns {Promise<Object<String,QueryResult>>} The queries results, indexed by the call name
    */
   multipleQueries(...queries) {
     const queriesToDo = queries.map(({call, params = {}}) => {
@@ -152,7 +159,7 @@ class UROAuth extends OAuth {
    * Do one query
    * @param call Call name
    * @param [params={}] Call params
-   * @returns {Promise<Object>} The query result
+   * @returns {Promise<QueryResult>} The query result
    */
   async query(call, params = {}) {
     return (await this.multipleQueries({

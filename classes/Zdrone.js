@@ -95,20 +95,25 @@ class Zdrone extends CommandClient {
     });
 
     this.registerCommand('trivia', async (message, commandName, args) => {
-      if (this.trivias[message.channel.id] && this.trivias[message.channel.id].running) {
-        message.reply('A trivia is already running here.');
-      } else {
-        const [rounds = 10, illustrationRate = 33, biographyRate = 33, abilityRate = 33] = args;
-        this.trivias[message.channel.id] = new Trivia({
-          channel: message.channel,
-          discordClient: this,
-          rounds,
-          illustrationRate,
-          biographyRate,
-          abilityRate,
-        });
-        await Promise.all([message.channel.send(`${rounds} rounds trivia is preparing. Be ready...`), this.trivias[message.channel.id].start()]);
-        await this.trivias[message.channel.id].sendQuestion();
+      try {
+        if (this.trivias[message.channel.id] && this.trivias[message.channel.id].running) {
+          message.reply('A trivia is already running here.');
+        } else {
+          const [rounds = 10, illustrationRate = 33, biographyRate = 33, abilityRate = 33] = args;
+          this.trivias[message.channel.id] = new Trivia({
+            channel: message.channel,
+            discordClient: this,
+            rounds,
+            illustrationRate,
+            biographyRate,
+            abilityRate,
+          });
+          await Promise.all([message.channel.send(`${rounds} rounds trivia is preparing. Be ready...`), this.trivias[message.channel.id].start()]);
+          await this.trivias[message.channel.id].sendQuestion();
+        }
+      } catch (err) {
+        console.error(err);
+        message.reply(err.message || err.data || 'An error occurred');
       }
     }, {
       displayInHelp: true,
@@ -119,7 +124,7 @@ class Zdrone extends CommandClient {
       usageMessage: '%c [rounds_number] [probability_of_illustrations] [probability_of_biography] [probability_of_ability]',
     });
 
-    this.registerCommand('tanswer', async (message, commandName, args) => {
+    this.registerCommand('a', async (message, commandName, args) => {
       if (this.trivias[message.channel.id] && this.trivias[message.channel.id].running) {
         const answer = args.join(' ');
         const result = this.trivias[message.channel.id].handleAnswer(message.author, answer);
