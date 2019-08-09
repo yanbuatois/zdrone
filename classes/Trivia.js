@@ -153,10 +153,10 @@ class Trivia {
   }
 
   handleAnswer(player, answer) {
-    const response = this.responses[this.round];
-    const result = answer.toLowerCase() === response.text.toLowerCase();
-
     if (this.roundPlaying) {
+      const response = this.responses[this.round];
+      const result = answer.toLowerCase() === response.text.toLowerCase();
+
       if (result) {
         this.increasePlayerScore(player.id);
         this.channel.send(`:thumbsup: You're right! The character was **${response.text}**!\n${player.username} won **1** point. His score is now ${this.scoreBoard[player.id]}!\nhttps://www.urban-rivals.com${response.character.url}`);
