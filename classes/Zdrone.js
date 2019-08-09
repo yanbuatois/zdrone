@@ -95,26 +95,27 @@ class Zdrone extends CommandClient {
     });
 
     this.registerCommand('trivia', async (message, commandName, args) => {
-      try {
         if (this.trivias[message.channel.id] && this.trivias[message.channel.id].running) {
           message.reply('A trivia is already running here.');
         } else {
-          const [rounds = 10, illustrationRate = 33, biographyRate = 33, abilityRate = 33] = args;
-          this.trivias[message.channel.id] = new Trivia({
-            channel: message.channel,
-            discordClient: this,
-            rounds,
-            illustrationRate,
-            biographyRate,
-            abilityRate,
-          });
-          await Promise.all([message.channel.send(`${rounds} rounds trivia is preparing. Be ready...`), this.trivias[message.channel.id].start()]);
-          await this.trivias[message.channel.id].nextRound();
+          try {
+            const [rounds = 10, illustrationRate = 33, biographyRate = 33, abilityRate = 33] = args;
+            this.trivias[message.channel.id] = new Trivia({
+              channel: message.channel,
+              discordClient: this,
+              rounds,
+              illustrationRate,
+              biographyRate,
+              abilityRate,
+            });
+            await Promise.all([message.channel.send(`${rounds} rounds trivia is preparing. Be ready...`), this.trivias[message.channel.id].start()]);
+            await this.trivias[message.channel.id].nextRound();
+          } catch (err) {
+            console.error(err);
+            message.reply(err.message || err.data || 'An error occurred');
+            this.trivias[message.channel.id].stop();
+          }
         }
-      } catch (err) {
-        console.error(err);
-        message.reply(err.message || err.data || 'An error occurred');
-      }
     }, {
       displayInHelp: true,
       helpMessage: 'Run a trivia game',
