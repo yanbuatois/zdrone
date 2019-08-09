@@ -166,6 +166,7 @@ class Trivia {
       }
     } else {
       this.channel.send(this.round === -1 ? 'The game hasn\'t started yet :wink:' : 'The round has ended, be quicker next time :confused:');
+      return false;
     }
 
     return result;
