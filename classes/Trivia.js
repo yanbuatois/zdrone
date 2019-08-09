@@ -42,7 +42,6 @@ class Trivia {
   }
 
   sendQuestion() {
-    console.log(this.questions[this.round].picture);
     return this.channel.send(this.questions[this.round].text, (this.questions[this.round].picture) ? {
       files: [{
         attachment: this.questions[this.round].picture,
@@ -113,7 +112,6 @@ class Trivia {
     }
 
     this.questions.push(question);
-    console.log(question);
     this.responses.push(response);
     return question;
   }
