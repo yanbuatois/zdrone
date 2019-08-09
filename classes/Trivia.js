@@ -19,11 +19,11 @@ class Trivia {
       throw new Error('The channel is not valid.');
     }
     this.channel = channel;
-    this.rounds = rounds;
+    this.rounds = Number(rounds);
     this.discordClient = discordClient;
-    this.illustrationRate = illustrationRate;
-    this.biographyRate = biographyRate;
-    this.abilityRate = abilityRate;
+    this.illustrationRate = Number(illustrationRate);
+    this.biographyRate = Number(biographyRate);
+    this.abilityRate = Number(abilityRate);
 
     if (this.rounds === 0) {
       throw new Error('You cannot create a trivia with 0 round.');
@@ -88,7 +88,7 @@ class Trivia {
       const miniName = (['cr','m','l']).includes(randomChara.rarity) ? randomChara.name.slice(0, -3) : randomChara.name;
       const nameRegex = new RegExp(`${miniName}( (Cr|Mt|Ld))?`, 'g');
       question = {
-        text: `Which character has the following biography ?\n> ${randomChara.description.replace('\n', '\n> ').replace(nameRegex, '???')}`
+        text: `Which character has the following biography ?\n> ${randomChara.description.replace(/\n/g, '\n> ').replace(nameRegex, '???')}`
       };
       response = {
         text: randomChara.name,
