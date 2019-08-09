@@ -60,7 +60,6 @@ class Trivia {
     const { urApi } = this.discordClient;
     const choice = Math.random() * Math.floor(Number(illustrationRate) + Number(biographyRate) + Number(abilityRate));
 
-    console.log('started');
     const { items: charas } = await urApi.query("characters.getCharacters", { sortby: 'clan', maxLevels: true });
     if (choice < illustrationRate) {
       // Illu

@@ -129,7 +129,6 @@ class Zdrone extends CommandClient {
         const answer = args.join(' ');
         const result = this.trivias[message.channel.id].handleAnswer(message.author, answer);
         if (result) {
-          console.log(this.trivias[message.channel.id]);
           await this.trivias[message.channel.id].displayScoreboard();
           if (this.trivias[message.channel.id].lastRound) {
             await this.trivias[message.channel.id].nextRound();
