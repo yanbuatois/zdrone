@@ -29,12 +29,13 @@ class Trivia {
       throw new Error('You cannot create a trivia with 0 round.');
     }
 
-    this.round = 0;
+    this.round = -1;
     this.scoreBoard = {};
     this.questions = [];
     this.responses = [];
     this.running = true;
     this.type = '';
+    this.roundPlaying = false;
   }
 
   start() {
@@ -129,6 +130,7 @@ class Trivia {
 
   _nextRound() {
     this.increaseRound();
+    this.roundPlaying = true;
     return this.questions[this.round];
   }
 
@@ -154,11 +156,16 @@ class Trivia {
     const response = this.responses[this.round];
     const result = answer.toLowerCase() === response.text.toLowerCase();
 
-    if (result) {
-      this.increasePlayerScore(player.id);
-      this.channel.send(`:thumbsup: You're right! The character was **${response.text}**!\n${player.username} won **1** point. His score is now ${this.scoreBoard[player.id]}!\nhttps://www.urban-rivals.com${response.character.url}`);
+    if (this.roundPlaying) {
+      if (result) {
+        this.increasePlayerScore(player.id);
+        this.channel.send(`:thumbsup: You're right! The character was **${response.text}**!\n${player.username} won **1** point. His score is now ${this.scoreBoard[player.id]}!\nhttps://www.urban-rivals.com${response.character.url}`);
+        this.roundPlaying = false;
+      } else {
+        this.channel.send(`:frowning: Bad answer... Try again!`);
+      }
     } else {
-      this.channel.send(`:frowning: Bad answer... Try again!`);
+      this.channel.send(this.round === -1 ? 'The game hasn\'t started yet :wink:' : 'The round has ended, be quicker next time :confused:');
     }
 
     return result;

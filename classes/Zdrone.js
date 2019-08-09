@@ -109,7 +109,7 @@ class Zdrone extends CommandClient {
             abilityRate,
           });
           await Promise.all([message.channel.send(`${rounds} rounds trivia is preparing. Be ready...`), this.trivias[message.channel.id].start()]);
-          await this.trivias[message.channel.id].sendQuestion();
+          await this.trivias[message.channel.id].nextRound();
         }
       } catch (err) {
         console.error(err);
