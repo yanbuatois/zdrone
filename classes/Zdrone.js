@@ -108,8 +108,10 @@ class Zdrone extends CommandClient {
               biographyRate,
               abilityRate,
             });
+            message.channel.startTyping();
             await Promise.all([message.channel.send(`${rounds} rounds trivia is preparing. Be ready...`), this.trivias[message.channel.id].start()]);
             await this.trivias[message.channel.id].nextRound();
+            message.channel.stopTyping();
           } catch (err) {
             console.error(err);
             message.reply(err.message || err.data || 'An error occurred');
@@ -134,9 +136,11 @@ class Zdrone extends CommandClient {
           if (this.trivias[message.channel.id].lastRound) {
             await this.trivias[message.channel.id].nextRound();
           } else {
+            message.channel.startTyping();
             await message.channel.send(`Next question in 5 seconds... (round **${this.trivias[message.channel.id].publicRound + 1}**)`);
             setTimeout(async () => {
               await this.trivias[message.channel.id].nextRound();
+              message.channel.stopTyping();
             }, 5 * 1000);
           }
         }

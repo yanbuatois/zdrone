@@ -30,10 +30,11 @@ const { OAuth } = require('oauth');
 class UROAuth extends OAuth {
   /**
    *
-   * @param key Application key
-   * @param secret Application secret
-   * @param [algorithm='HMAC-SHA1'] Signing method
-   * @param [authorizeCallback=null] Callback called when authorized
+   * @param {Object} options API options
+   * @property {String} key Application key
+   * @property {String} secret Application secret
+   * @property {String} [algorithm='HMAC-SHA1'] Signing method
+   * @property {Function} [authorizeCallback=null] Callback called when authorized
    */
   constructor({
     key,
