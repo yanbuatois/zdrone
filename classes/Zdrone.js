@@ -107,7 +107,8 @@ class Zdrone extends CommandClient {
               abilityRate,
             });
             message.channel.startTyping();
-            await Promise.all([message.channel.send(`${rounds} rounds trivia is preparing. Be ready...`), this.trivias[message.channel.id].start()]);
+            await Promise.all([message.channel.send(`${rounds} rounds trivia is preparing. Be ready...`), abilityRate ? this.trivias[message.channel.id].getUniqueAbilityCharacters() : this.trivias[message.channel.id].getAvailableCharacters()]);
+            await this.trivias[message.channel.id].start();
             await this.trivias[message.channel.id].nextRound();
             message.channel.stopTyping();
           } catch (err) {

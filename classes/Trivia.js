@@ -66,6 +66,7 @@ class Trivia {
 
   async getUniqueAbilityCharacters() {
     if (!this.uniqueAbilityCharacters.length) {
+      console.log('calcul');
       const charas = await this.getAvailableCharacters();
       const pouvoirsComptes = _.countBy(charas, (char) => char.ability);
       const pouvoirsUniques = _.keys(_.pick(pouvoirsComptes, (value) => value === 1));
@@ -96,7 +97,7 @@ class Trivia {
       const rCha = charas[Math.floor(Math.random()*charas.length)];
       const { id, level_max, level_min } = rCha;
       const randLevelNb = Math.round(Math.random()*(level_max - level_min)) + level_min;
-      console.log(`${level_min}:${randLevelNb}:${level_max}`);
+      // console.log(`${level_min}:${randLevelNb}:${level_max}`);
       const level = (await urApi.query('characters.getCharacterLevels', {
         characterID: id,
         levelMax: randLevelNb,
