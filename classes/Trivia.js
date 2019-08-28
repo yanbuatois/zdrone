@@ -42,8 +42,11 @@ class Trivia {
     this.uniqueAbilityCharacters = [];
   }
 
-  start() {
-    return Promise.all(_.times(this.rounds, () => this.generateNewQuestion()));
+  async start() {
+    const questions = await Promise.all(_.times(this.rounds, () => this.generateNewQuestion()));
+    this.questions = questions.map(({question}) => question);
+    this.responses = questions.map(({response}) => response);
+    return questions;
   }
 
   sendQuestion() {
@@ -145,9 +148,10 @@ class Trivia {
       // Pouvoir unique
     }
 
-    this.questions.push(question);
-    this.responses.push(response);
-    return question;
+    return {
+      question,
+      response,
+    };
   }
 
   increasePlayerScore(playerId) {
