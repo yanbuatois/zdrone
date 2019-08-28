@@ -20,6 +20,7 @@
     "dotenv": "^8.1.0",
     "mkdirp": "^0.5.1",
     "oauth": "^0.9.15",
+    "random": "^2.1.1",
     "underscore": "^1.9.1",
     "urban-rivals-oauth": "^1.2.1"
   }

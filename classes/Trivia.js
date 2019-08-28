@@ -1,4 +1,5 @@
 const _ = require('underscore');
+const random = require('random');
 
 /**
  * @typedef {Object} Question Trivia question
@@ -85,7 +86,9 @@ class Trivia {
 
     let question, response;
     const { urApi } = this.discordClient;
-    const choice = Math.random() * Math.floor(Number(illustrationRate) + Number(biographyRate) + Number(abilityRate));
+    // const choice = Math.random() * Math.floor(Number(illustrationRate) + Number(biographyRate) + Number(abilityRate));
+    const choice = random.int(0, Number(illustrationRate) + Number(biographyRate) + Number(abilityRate));
+    console.log(choice);
 
     const charas = await this.getAvailableCharacters();
 
@@ -93,9 +96,9 @@ class Trivia {
       // Illu
       this.type = 'illustration';
       // const { id } = charas[Math.floor(Math.random()*charas.length)];
-      const rCha = charas[Math.floor(Math.random()*charas.length)];
+      const rCha = charas[random.int(0,charas.length - 1)];
       const { id, level_max, level_min } = rCha;
-      const randLevelNb = Math.round(Math.random()*(level_max - level_min)) + level_min;
+      const randLevelNb = random.int(level_min, level_max);
       // console.log(`${level_min}:${randLevelNb}:${level_max}`);
       const level = (await urApi.query('characters.getCharacterLevels', {
         characterID: id,
@@ -117,7 +120,7 @@ class Trivia {
     } else if (choice < Number(illustrationRate) + Number(biographyRate)) {
       this.type = 'biography';
       // Bio
-      const randomChara = charas[Math.floor(Math.random()*charas.length)];
+      const randomChara = charas[random.int(0, charas.length - 1)];
       const miniName = (['cr','m','l']).includes(randomChara.rarity) ? randomChara.name.slice(0, -3) : randomChara.name;
       const nameRegex = new RegExp(`${miniName}( (Cr|Mt|Ld))?`, 'g');
       question = {
@@ -131,7 +134,7 @@ class Trivia {
       this.type = 'ability';
 
       const persosPouvoirsUniques = await this.getUniqueAbilityCharacters();
-      const randomChara = persosPouvoirsUniques[Math.floor(Math.random()*persosPouvoirsUniques.length)];
+      const randomChara = persosPouvoirsUniques[random.int(0, persosPouvoirsUniques.length)];
       question = {
         text: `Which character has the following ability ?\n> ${randomChara.ability}`,
       };
