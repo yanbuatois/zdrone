@@ -36,6 +36,9 @@ class Trivia {
     this.running = true;
     this.type = '';
     this.roundPlaying = false;
+
+    this.availableCharacters = [];
+    this.uniqueAbilityCharacters = [];
   }
 
   start() {
@@ -51,6 +54,29 @@ class Trivia {
     } : undefined);
   }
 
+  async getAvailableCharacters() {
+    if (!this.availableCharacters.length) {
+      const { items: charas } = await this.discordClient.urApi.query("characters.getCharacters", { sortby: 'clan', maxLevels: true }, {
+        itemsFilter: ['name','id','url','level','rarity','ability','characterPictUrl','characterNewPictUrl','description', 'level_max', 'level_min'],
+      });
+      this.availableCharacters = charas;
+    }
+    return this.availableCharacters;
+  }
+
+  async getUniqueAbilityCharacters() {
+    if (!this.uniqueAbilityCharacters.length) {
+      const charas = await this.getAvailableCharacters();
+      const pouvoirsComptes = _.countBy(charas, (char) => char.ability);
+      const pouvoirsUniques = _.keys(_.pick(pouvoirsComptes, (value) => value === 1));
+      const persosPouvoirsUniques = _.filter(charas, (item) => pouvoirsUniques.includes(item.ability));
+
+      this.uniqueAbilityCharacters = persosPouvoirsUniques;
+    }
+
+    return this.uniqueAbilityCharacters;
+  }
+
   async generateNewQuestion({
     illustrationRate = this.illustrationRate,
     biographyRate = this.biographyRate,
@@ -61,17 +87,24 @@ class Trivia {
     const { urApi } = this.discordClient;
     const choice = Math.random() * Math.floor(Number(illustrationRate) + Number(biographyRate) + Number(abilityRate));
 
-    const { items: charas } = await urApi.query("characters.getCharacters", { sortby: 'clan', maxLevels: true });
+    const charas = await this.getAvailableCharacters();
+
     if (choice < illustrationRate) {
       // Illu
       this.type = 'illustration';
-      const { id } = charas[Math.floor(Math.random()*charas.length)];
+      // const { id } = charas[Math.floor(Math.random()*charas.length)];
+      const rCha = charas[Math.floor(Math.random()*charas.length)];
+      const { id, level_max, level_min } = rCha;
+      const randLevelNb = Math.round(Math.random()*(level_max - level_min)) + level_min;
+      console.log(`${level_min}:${randLevelNb}:${level_max}`);
       const level = (await urApi.query('characters.getCharacterLevels', {
         characterID: id,
-        levelMax: -1,
+        levelMax: randLevelNb,
         imageSize: 'large',
+      }, {
+        itemsFilter: ['characterHDBigPictURL', 'name', 'id', 'level', 'level_min', 'level_max', 'url'],
       })).items;
-      const randLevel = level[Math.floor(Math.random()*level.length)];
+      const randLevel = level[level.length - 1];
       const url = randLevel.characterHDBigPictURL;
       question = {
         text: 'Which character has this illustration ?',
@@ -96,10 +129,8 @@ class Trivia {
       };
     } else {
       this.type = 'ability';
-      const { items } = await urApi.query("characters.getCharacters", { maxLevels: true });
-      const pouvoirsComptes = _.countBy(items, (char) => char.ability);
-      const pouvoirsUniques = _.keys(_.pick(pouvoirsComptes, (value) => value === 1));
-      const persosPouvoirsUniques = _.filter(items, (item) => pouvoirsUniques.includes(item.ability));
+
+      const persosPouvoirsUniques = await this.getUniqueAbilityCharacters();
       const randomChara = persosPouvoirsUniques[Math.floor(Math.random()*persosPouvoirsUniques.length)];
       question = {
         text: `Which character has the following ability ?\n> ${randomChara.ability}`,

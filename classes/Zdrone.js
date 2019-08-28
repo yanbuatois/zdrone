@@ -1,7 +1,7 @@
 const { CommandClient } = require('discord-js-command-client');
 const { Permissions } = require('discord.js');
 
-const UROAuth = require('./UROAuth');
+const CustomUROAuth = require('./UROAuth');
 const TokensSaver = require('./TokensSaver');
 const Trivia = require('./Trivia');
 const config = require('../config');
@@ -9,7 +9,7 @@ const config = require('../config');
 class Zdrone extends CommandClient {
   constructor() {
     super('//');
-    this.urApi = new UROAuth({
+    this.urApi = new CustomUROAuth({
       key: config.key,
       secret: config.secret,
     });
@@ -29,9 +29,7 @@ class Zdrone extends CommandClient {
             const verifierCallback = async (message) => {
               if (message.channel.type === 'dm' && message.channel.recipient.id === this.owner.id && message.author.id === this.owner.id) {
                 try {
-                  await this.urApi.getAccessToken({
-                    userToken: message.content,
-                  });
+                  await this.urApi.getAccessToken();
                   const player = await this.urApi.getLoggedPlayer(true);
                   this.removeListener('message', verifierCallback);
                   resolve(player);
@@ -83,7 +81,7 @@ class Zdrone extends CommandClient {
         const returnValue = await this.urApi.query(call, JSON.parse(callArgs));
         const reply = this._sliceMessage(JSON.stringify(returnValue));
         await Promise.all(reply.map(elt => message.channel.send('```' + elt + '```')));
-        console.log(returnValue);
+        // console.log(returnValue);
       } catch (err) {
         await Promise.all((this._sliceMessage(err.message || err.data).map(elt => message.channel.send(elt))));
         console.error(err);
@@ -137,7 +135,7 @@ class Zdrone extends CommandClient {
             await this.trivias[message.channel.id].nextRound();
           } else {
             message.channel.startTyping();
-            await message.channel.send(`Next question in 5 seconds... (round **${this.trivias[message.channel.id].publicRound + 1}**)`);
+            await message.channel.send(`Next question in 5 seconds... (round **${this.trivias[message.channel.id].publicRound + 1}/${this.trivias[message.channel.id].rounds}**)`);
             setTimeout(async () => {
               await this.trivias[message.channel.id].nextRound();
               message.channel.stopTyping();

@@ -17,9 +17,10 @@
   "dependencies": {
     "discord-js-command-client": "^1.0.1",
     "discord.js": "^11.5.1",
-    "dotenv": "^8.0.0",
+    "dotenv": "^8.1.0",
     "mkdirp": "^0.5.1",
     "oauth": "^0.9.15",
-    "underscore": "^1.9.1"
+    "underscore": "^1.9.1",
+    "urban-rivals-oauth": "^1.2.1"
   }
 }
