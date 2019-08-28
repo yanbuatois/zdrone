@@ -66,7 +66,6 @@ class Trivia {
 
   async getUniqueAbilityCharacters() {
     if (!this.uniqueAbilityCharacters.length) {
-      console.log('calcul');
       const charas = await this.getAvailableCharacters();
       const pouvoirsComptes = _.countBy(charas, (char) => char.ability);
       const pouvoirsUniques = _.keys(_.pick(pouvoirsComptes, (value) => value === 1));
